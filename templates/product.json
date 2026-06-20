@@ -6,7 +6,7 @@
         "subtitle": {
           "type": "text",
           "settings": {
-            "text": "{{ product.metafields.custom.subtitle | default: product.type }}",
+            "text": "Enthält Algenöl mit DHA und EPA",
             "text_style": "subtitle"
           }
         },
