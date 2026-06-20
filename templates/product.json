@@ -3,11 +3,11 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "vendor": {
+        "subtitle": {
           "type": "text",
           "settings": {
-            "text": "{{ product.vendor }}",
-            "text_style": "uppercase"
+            "text": "{{ product.metafields.custom.subtitle | default: product.type }}",
+            "text_style": "subtitle"
           }
         },
         "title": {
@@ -16,42 +16,32 @@
         "price": {
           "type": "price"
         },
-        "variant_picker": {
-          "type": "variant_picker",
+        "inventory": {
+          "type": "inventory",
           "settings": {
-            "picker_type": "button",
-            "swatch_shape": "circle"
+            "text_style": "body",
+            "inventory_threshold": 0,
+            "show_inventory_quantity": false
           }
-        },
-        "quantity_selector": {
-          "type": "quantity_selector"
         },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
           }
         },
         "description": {
           "type": "description"
-        },
-        "share": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
         }
       },
       "block_order": [
-        "vendor",
+        "subtitle",
         "title",
         "price",
-        "variant_picker",
-        "quantity_selector",
+        "inventory",
         "buy_buttons",
-        "description",
-        "share"
+        "description"
       ],
       "settings": {
         "enable_sticky_info": true,
@@ -69,11 +59,57 @@
         "padding_bottom": 12
       }
     },
-    "disclosures": {
-      "type": "disclosures",
+    "trust-badges": {
+      "type": "product-trust-badges",
+      "blocks": {
+        "badge-1": {
+          "type": "badge",
+          "settings": {
+            "label": "Omega-Schutz",
+            "icon": "icon-heart"
+          }
+        },
+        "badge-2": {
+          "type": "badge",
+          "settings": {
+            "label": "Laborzertifiziert",
+            "icon": "icon-clipboard"
+          }
+        },
+        "badge-3": {
+          "type": "badge",
+          "settings": {
+            "label": "Gentechnikfrei",
+            "icon": "icon-leaf"
+          }
+        },
+        "badge-4": {
+          "type": "badge",
+          "settings": {
+            "label": "Vegan",
+            "icon": "icon-leaf"
+          }
+        },
+        "badge-5": {
+          "type": "badge",
+          "settings": {
+            "label": "Omega-3-reich",
+            "icon": "icon-heart"
+          }
+        },
+        "badge-6": {
+          "type": "badge",
+          "settings": {
+            "label": "Herstellung in Deutschland",
+            "icon": "icon-lock"
+          }
+        }
+      },
+      "block_order": ["badge-1", "badge-2", "badge-3", "badge-4", "badge-5", "badge-6"],
       "settings": {
-        "padding_top": 36,
-        "padding_bottom": 0
+        "color_scheme": "scheme-2",
+        "padding_top": 28,
+        "padding_bottom": 28
       }
     },
     "related-products": {
@@ -97,7 +133,7 @@
   },
   "order": [
     "main",
-    "disclosures",
+    "trust-badges",
     "related-products"
   ]
 }
