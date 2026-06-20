@@ -1,0 +1,83 @@
+/* ===== Preisbereich ===== */
+.pdp-price-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.pdp-price-old {
+  color: #999999;
+  font-size: 1.7rem;
+  font-weight: 400;
+  text-decoration: line-through;
+}
+
+.pdp-price-current {
+  color: #3e8e41;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pdp-price-tax {
+  color: #777777;
+  font-size: 1.3rem;
+}
+
+/* ===== Verfügbarkeit ===== */
+.pdp-availability {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0;
+  color: #3e8e41;
+  font-size: 1.3rem;
+}
+
+.pdp-availability-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background-color: #3e8e41;
+  flex-shrink: 0;
+}
+
+/* ===== "In den Warenkorb" Button ===== */
+.product__info-container .product-form__submit.button {
+  background: #4a7a52;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 1.6rem 2rem;
+  min-height: 0;
+  font-weight: 600;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  transition: background-color var(--duration-short, 0.15s) ease;
+}
+
+.product__info-container .product-form__submit.button::before,
+.product__info-container .product-form__submit.button::after {
+  display: none;
+}
+
+.product__info-container .product-form__submit.button:hover:not([disabled]) {
+  background: #3f6a47;
+}
+
+.product-form__lock {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ffffff;
+  display: inline-flex;
+}
+
+.product-form__lock svg {
+  width: 100%;
+  height: 100%;
+}

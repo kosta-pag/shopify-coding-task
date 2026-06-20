@@ -91,6 +91,9 @@
                 {{ 'products.product.add_to_cart' | t }}
               {%- endif -%}
             </span>
+            <span class="svg-wrapper product-form__lock">
+              {{- 'icon-lock.svg' | inline_asset_content -}}
+            </span>
             {%- render 'loading-spinner' -%}
           </button>
           {%- if show_dynamic_checkout -%}

@@ -13,15 +13,10 @@
         "title": {
           "type": "title"
         },
-        "price": {
-          "type": "price"
-        },
-        "inventory": {
-          "type": "inventory",
+        "price_info": {
+          "type": "custom_liquid",
           "settings": {
-            "text_style": "body",
-            "inventory_threshold": 0,
-            "show_inventory_quantity": false
+            "custom_liquid": "{%- assign v = product.selected_or_first_available_variant -%}<div class=\"pdp-price-row\">{%- if v.compare_at_price > v.price -%}<s class=\"pdp-price-old\">{{ v.compare_at_price | money }}</s>{%- endif -%}<span class=\"pdp-price-current\">{{ v.price | money }}</span><span class=\"pdp-price-tax\">inkl. MwSt.</span></div><p class=\"pdp-availability\"><span class=\"pdp-availability-dot\"></span>{%- if v.available -%}Auf Lager! Versand in ca. 2–4 Werktagen{%- else -%}Derzeit nicht verfügbar{%- endif -%}</p>"
           }
         },
         "buy_buttons": {
@@ -38,8 +33,7 @@
       "block_order": [
         "subtitle",
         "title",
-        "price",
-        "inventory",
+        "price_info",
         "buy_buttons",
         "description"
       ],
@@ -64,52 +58,34 @@
       "blocks": {
         "badge-1": {
           "type": "badge",
-          "settings": {
-            "label": "Omega-Schutz",
-            "icon": "icon-heart"
-          }
+          "settings": { "label": "Omega-Schutz", "icon": "icon-feature-shield" }
         },
         "badge-2": {
           "type": "badge",
-          "settings": {
-            "label": "Laborzertifiziert",
-            "icon": "icon-clipboard"
-          }
+          "settings": { "label": "Laborzertifiziert", "icon": "icon-feature-pipette" }
         },
         "badge-3": {
           "type": "badge",
-          "settings": {
-            "label": "Gentechnikfrei",
-            "icon": "icon-leaf"
-          }
+          "settings": { "label": "Gentechnikfrei", "icon": "icon-feature-no-gmo" }
         },
         "badge-4": {
           "type": "badge",
-          "settings": {
-            "label": "Vegan",
-            "icon": "icon-leaf"
-          }
+          "settings": { "label": "Vegan", "icon": "icon-feature-leaf" }
         },
         "badge-5": {
           "type": "badge",
-          "settings": {
-            "label": "Omega-3-reich",
-            "icon": "icon-heart"
-          }
+          "settings": { "label": "Omega-3-reich", "icon": "icon-feature-droplet" }
         },
         "badge-6": {
           "type": "badge",
-          "settings": {
-            "label": "Herstellung in Deutschland",
-            "icon": "icon-lock"
-          }
+          "settings": { "label": "Herstellung in Deutschland", "icon": "icon-feature-germany" }
         }
       },
       "block_order": ["badge-1", "badge-2", "badge-3", "badge-4", "badge-5", "badge-6"],
       "settings": {
         "color_scheme": "scheme-2",
-        "padding_top": 28,
-        "padding_bottom": 28
+        "padding_top": 32,
+        "padding_bottom": 32
       }
     },
     "related-products": {

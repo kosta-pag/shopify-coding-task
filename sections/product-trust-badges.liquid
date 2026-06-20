@@ -13,7 +13,7 @@
   }
 {%- endstyle -%}
 
-<div class="trust-badges section-{{ section.id }}-padding color-{{ section.settings.color_scheme }} gradient">
+<div class="trust-badges section-{{ section.id }}-padding">
   <div class="page-width">
     <ul class="trust-badges__list list-unstyled" role="list">
       {%- for block in section.blocks -%}
@@ -64,16 +64,14 @@
           "id": "icon",
           "label": "Icon",
           "options": [
-            { "value": "icon-heart", "label": "Heart" },
-            { "value": "icon-clipboard", "label": "Clipboard" },
-            { "value": "icon-leaf", "label": "Leaf" },
-            { "value": "icon-lock", "label": "Lock" },
-            { "value": "icon-return", "label": "Return" },
-            { "value": "icon-truck", "label": "Truck" },
-            { "value": "icon-star", "label": "Star" },
-            { "value": "icon-check-mark", "label": "Check mark" }
+            { "value": "icon-feature-shield", "label": "Shield (Schutz)" },
+            { "value": "icon-feature-pipette", "label": "Pipette (Labor)" },
+            { "value": "icon-feature-no-gmo", "label": "No GMO (Gentechnikfrei)" },
+            { "value": "icon-feature-leaf", "label": "Leaf (Vegan)" },
+            { "value": "icon-feature-droplet", "label": "Droplet (Omega-3)" },
+            { "value": "icon-feature-germany", "label": "Germany (Herstellung)" }
           ],
-          "default": "icon-heart"
+          "default": "icon-feature-shield"
         },
         {
           "type": "image_picker",
@@ -121,12 +119,12 @@
     {
       "name": "Trust Badges",
       "blocks": [
-        { "type": "badge", "settings": { "label": "Omega-Schutz", "icon": "icon-heart" } },
-        { "type": "badge", "settings": { "label": "Laborzertifiziert", "icon": "icon-clipboard" } },
-        { "type": "badge", "settings": { "label": "Gentechnikfrei", "icon": "icon-leaf" } },
-        { "type": "badge", "settings": { "label": "Vegan", "icon": "icon-leaf" } },
-        { "type": "badge", "settings": { "label": "Omega-3-reich", "icon": "icon-heart" } },
-        { "type": "badge", "settings": { "label": "Herstellung in Deutschland", "icon": "icon-lock" } }
+        { "type": "badge", "settings": { "label": "Omega-Schutz", "icon": "icon-feature-shield" } },
+        { "type": "badge", "settings": { "label": "Laborzertifiziert", "icon": "icon-feature-pipette" } },
+        { "type": "badge", "settings": { "label": "Gentechnikfrei", "icon": "icon-feature-no-gmo" } },
+        { "type": "badge", "settings": { "label": "Vegan", "icon": "icon-feature-leaf" } },
+        { "type": "badge", "settings": { "label": "Omega-3-reich", "icon": "icon-feature-droplet" } },
+        { "type": "badge", "settings": { "label": "Herstellung in Deutschland", "icon": "icon-feature-germany" } }
       ]
     }
   ]
