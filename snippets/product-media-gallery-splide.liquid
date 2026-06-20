@@ -1,0 +1,452 @@
+{% comment %}
+  Splide.js-powered product media gallery.
+  Desktop: vertical thumbnail strip on left, main image on right with prev/next arrows.
+  Mobile: full-width main image on top, horizontal thumbnail strip below.
+
+  Accepts:
+  - product: {Object} Product liquid object
+  - variant_images: {Array} Product images associated with a variant
+{% endcomment %}
+
+{%- liquid
+  assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+  assign media_count = product.media.size
+-%}
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide-core.min.css"
+  media="print"
+  onload="this.media='all'"
+>
+
+<style>
+  .splide-gallery {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .splide-gallery__thumbs {
+    order: 2;
+  }
+
+  .splide-gallery__main {
+    order: 1;
+    flex: 1;
+    position: relative;
+  }
+
+  @media screen and (min-width: 750px) {
+    .splide-gallery {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .splide-gallery__thumbs {
+      order: -1;
+      width: 90px;
+      flex-shrink: 0;
+    }
+
+    .splide-gallery__main {
+      order: 1;
+    }
+  }
+
+  /* Main slider image */
+  .splide-gallery__main .splide__slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: var(--media-radius, 0);
+  }
+
+  /* Arrow buttons */
+  .splide-gallery__main .splide__arrows {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 2;
+  }
+
+  .splide-gallery__main .splide__arrow {
+    background: rgb(var(--color-background));
+    border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+    border-radius: 50%;
+    width: 3.6rem;
+    height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    color: rgb(var(--color-foreground));
+    transition: opacity 0.2s;
+  }
+
+  .splide-gallery__main .splide__arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .splide-gallery__main .splide__arrow svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: currentColor;
+  }
+
+  .splide-gallery__main .splide__arrow--prev svg {
+    transform: rotate(180deg);
+  }
+
+  /* Hide arrows when only 1 image */
+  .splide-gallery--single .splide__arrows {
+    display: none;
+  }
+
+  /* Thumbnail slides */
+  .splide-gallery__thumbs .splide__slide {
+    cursor: pointer;
+    opacity: 0.5;
+    border: 0.2rem solid transparent;
+    border-radius: calc(var(--media-radius, 0px) * 0.5);
+    overflow: hidden;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+
+  .splide-gallery__thumbs .splide__slide.is-active {
+    opacity: 1;
+    border-color: rgb(var(--color-foreground));
+  }
+
+  .splide-gallery__thumbs .splide__slide:hover {
+    opacity: 0.85;
+  }
+
+  .splide-gallery__thumbs .splide__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Mobile: horizontal thumbnail track */
+  @media screen and (max-width: 749px) {
+    .splide-gallery__thumbs .splide__list {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .splide-gallery__thumbs .splide__slide {
+      width: 72px !important;
+      height: 72px;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Desktop: vertical thumbnail track */
+  @media screen and (min-width: 750px) {
+    .splide-gallery__thumbs .splide__track {
+      height: 100%;
+    }
+
+    .splide-gallery__thumbs .splide__slide {
+      width: 90px !important;
+      height: 90px;
+    }
+  }
+</style>
+
+<media-gallery
+  id="MediaGallery-{{ section.id }}"
+  role="region"
+  {% if section.settings.enable_sticky_info %}
+    class="product__column-sticky"
+  {% endif %}
+  aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
+  data-desktop-layout="{{ section.settings.gallery_layout }}"
+>
+  <div
+    id="SplideGallery-{{ section.id }}"
+    class="splide-gallery{% if media_count <= 1 %} splide-gallery--single{% endif %}"
+  >
+    {%- if media_count > 1 -%}
+      <div
+        id="SplideThumb-{{ section.id }}"
+        class="splide splide-gallery__thumbs"
+        role="list"
+        aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
+      >
+        <div class="splide__track">
+          <ul class="splide__list">
+            {%- if featured_media != null -%}
+              <li
+                class="splide__slide"
+                data-target="{{ section.id }}-{{ featured_media.id }}"
+                data-media-position="1"
+                role="listitem"
+              >
+                {{
+                  featured_media.preview_image
+                  | image_url: width: 200
+                  | image_tag:
+                    loading: 'eager',
+                    widths: '90, 160, 200',
+                    alt: featured_media.alt
+                }}
+              </li>
+            {%- endif -%}
+            {%- assign thumb_position = 1 -%}
+            {%- for media in product.media -%}
+              {%- unless media.id == featured_media.id -%}
+                {%- assign thumb_position = thumb_position | plus: 1 -%}
+                {%- if section.settings.hide_variants and variant_images contains media.src -%}
+                  {%- continue -%}
+                {%- endif -%}
+                <li
+                  class="splide__slide"
+                  data-target="{{ section.id }}-{{ media.id }}"
+                  data-media-position="{{ thumb_position }}"
+                  role="listitem"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 200
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '90, 160, 200',
+                      alt: media.alt
+                  }}
+                </li>
+              {%- endunless -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div
+      id="SplideMain-{{ section.id }}"
+      class="splide splide-gallery__main"
+      aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
+    >
+      <div class="splide__track">
+        <ul
+          id="Slider-Gallery-{{ section.id }}"
+          class="splide__list"
+          role="list"
+        >
+          {%- if featured_media != null -%}
+            <li
+              id="Slide-{{ section.id }}-{{ featured_media.id }}"
+              class="splide__slide product__media-item is-active"
+              data-media-id="{{ section.id }}-{{ featured_media.id }}"
+              role="listitem"
+            >
+              {%- if featured_media.media_type == 'image' -%}
+                {{
+                  featured_media
+                  | image_url: width: 1000
+                  | image_tag:
+                    loading: 'eager',
+                    widths: '400, 600, 800, 1000',
+                    sizes: '(min-width: 990px) 55vw, (min-width: 750px) 65vw, 100vw',
+                    alt: featured_media.alt,
+                    class: 'product__media'
+                }}
+              {%- else -%}
+                {% render 'product-thumbnail',
+                  media: featured_media,
+                  media_count: media_count,
+                  position: 1,
+                  desktop_layout: section.settings.gallery_layout,
+                  mobile_layout: section.settings.mobile_thumbnails,
+                  loop: section.settings.enable_video_looping,
+                  modal_id: section.id,
+                  xr_button: true,
+                  media_width: 0.65,
+                  media_fit: section.settings.media_fit,
+                  constrain_to_viewport: section.settings.constrain_to_viewport,
+                  lazy_load: false
+                %}
+              {%- endif -%}
+            </li>
+          {%- endif -%}
+
+          {%- assign slide_position = 1 -%}
+          {%- for media in product.media -%}
+            {%- unless media.id == featured_media.id -%}
+              {%- assign slide_position = slide_position | plus: 1 -%}
+              {%- if section.settings.hide_variants and variant_images contains media.src -%}
+                {%- continue -%}
+              {%- endif -%}
+              <li
+                id="Slide-{{ section.id }}-{{ media.id }}"
+                class="splide__slide product__media-item"
+                data-media-id="{{ section.id }}-{{ media.id }}"
+                role="listitem"
+              >
+                {%- if media.media_type == 'image' -%}
+                  {{
+                    media
+                    | image_url: width: 1000
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '400, 600, 800, 1000',
+                      sizes: '(min-width: 990px) 55vw, (min-width: 750px) 65vw, 100vw',
+                      alt: media.alt,
+                      class: 'product__media'
+                  }}
+                {%- else -%}
+                  {% render 'product-thumbnail',
+                    media: media,
+                    media_count: media_count,
+                    position: slide_position,
+                    desktop_layout: section.settings.gallery_layout,
+                    mobile_layout: section.settings.mobile_thumbnails,
+                    loop: section.settings.enable_video_looping,
+                    modal_id: section.id,
+                    xr_button: true,
+                    media_width: 0.65,
+                    media_fit: section.settings.media_fit,
+                    constrain_to_viewport: section.settings.constrain_to_viewport,
+                    lazy_load: true
+                  %}
+                {%- endif -%}
+              </li>
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      {%- if media_count > 1 -%}
+        <div class="splide__arrows">
+          <button
+            class="splide__arrow splide__arrow--prev"
+            type="button"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+            </svg>
+          </button>
+          <button
+            class="splide__arrow splide__arrow--next"
+            type="button"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+            </svg>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</media-gallery>
+
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+<script>
+  (function () {
+    var galleryId = {{ section.id | json }};
+    var mainEl = document.getElementById('SplideMain-' + galleryId);
+    var thumbEl = document.getElementById('SplideThumb-' + galleryId);
+    var mediaGalleryEl = document.getElementById('MediaGallery-' + galleryId);
+
+    if (!mainEl) return;
+
+    var mainSplide = null;
+    var thumbSplide = null;
+    var lastIsDesktop = window.innerWidth >= 750;
+
+    function isDesktop() {
+      return window.innerWidth >= 750;
+    }
+
+    function getThumbHeight() {
+      return mainEl.offsetHeight > 0 ? mainEl.offsetHeight + 'px' : '500px';
+    }
+
+    function initGallery() {
+      var desktop = isDesktop();
+
+      if (mainSplide) {
+        mainSplide.destroy();
+        mainSplide = null;
+      }
+      if (thumbSplide) {
+        thumbSplide.destroy();
+        thumbSplide = null;
+      }
+
+      mainSplide = new Splide(mainEl, {
+        type: 'slide',
+        rewind: true,
+        pagination: false,
+        arrows: true,
+        drag: true,
+        keyboard: 'focused',
+      });
+
+      if (thumbEl) {
+        thumbSplide = new Splide(thumbEl, {
+          isNavigation: true,
+          rewind: true,
+          pagination: false,
+          arrows: false,
+          drag: true,
+          direction: desktop ? 'ttb' : 'ltr',
+          height: desktop ? getThumbHeight() : 'auto',
+          fixedWidth: desktop ? 90 : 72,
+          fixedHeight: desktop ? 90 : 72,
+          gap: 10,
+          perMove: 1,
+        });
+
+        mainSplide.sync(thumbSplide);
+      }
+
+      mainSplide.mount();
+      if (thumbSplide) thumbSplide.mount();
+
+      // Patch setActiveMedia for variant switching compatibility
+      if (mediaGalleryEl) {
+        var slides = mainEl.querySelectorAll('.splide__slide[data-media-id]');
+        mediaGalleryEl.setActiveMedia = function (mediaId) {
+          var idx = Array.from(slides).findIndex(function (s) {
+            return s.dataset.mediaId === mediaId;
+          });
+          if (idx >= 0) mainSplide.go(idx);
+        };
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGallery);
+    } else {
+      initGallery();
+    }
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        var desktop = isDesktop();
+        if (desktop !== lastIsDesktop) {
+          lastIsDesktop = desktop;
+          initGallery();
+          // Update thumb height after main re-renders
+          if (thumbSplide && desktop) {
+            thumbSplide.options = { height: getThumbHeight() };
+            thumbSplide.refresh();
+          }
+        }
+      }, 300);
+    });
+  })();
+</script>
